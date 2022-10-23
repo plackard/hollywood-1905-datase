@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v6.js"></script>
+<title> LOLLIPOP </title>
+
+<!-- Add 2 buttons -->
+<button onclick="update(data1)">Total Gross</button>
+<button onclick="update(data2)">Average Gross</button>
+<button onclick="update(data3)">Movies</button>
+<h1>LolliPop Chart by Emmanuel </h1>
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+<script>
+
+
+
+// create 2 data_set
+ data1 = [
+   {group: "Adventure", value: 64529536530},
+   {group: "Action", value: 49339974493},
+   {group: "Drama", value: 35586177269},
+   {group: "Comedy", value: 33687992318},
+   {group: "Thriller", value: 19810201102},
+   {group: "Horror", value: 13430378699},
+   {group: "Romantic", value: 10480124374},
+   {group: "Musical", value: 4293988317},
+   {group: "Documentary", value: 2519513142},
+   {group: "Black Comedy", value: 2185433323}
+];
+
+const data2 = [
+  {group: "Adventure", value: 58556748},
+   {group: "Action", value: 44936224},
+   {group: "Drama", value: 6495013},
+   {group: "Comedy", value: 13932172},
+   {group: "Thriller/Suspense", value:16703374},
+   {group: "Horror", value: 18757512},
+   {group: "Romantic", value: 16635118},
+   {group: "Musical", value: 21363126},
+   {group: "Documentary", value: 1043277},
+   {group: "Black Comedy", value: 10260250}
+];
+
+const data3 = [
+  {group: "Adventure", value:1102},
+   {group: "Action", value: 1098},
+   {group: "Drama", value: 5479},
+   {group: "Comedy", value: 2418},
+   {group: "Thriller/Suspense", value:1186},
+   {group: "Horror", value: 716},
+   {group: "Romantic", value: 630},
+   {group: "Musical", value: 201},
+   {group: "Documentary.", value: 2415},
+   {group: "Black Comedy", value: 213}
+];
+
+// set the dimensions and margins of the graph
+const margin = {top: 30, right: 30, bottom: 70, left: 80},
+    width = 900 - margin.left - margin.right,
+    height = 650 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+const svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+    
+
+// Initialize the X axis
+const x = d3.scaleBand()
+  .range([ 0, width ])
+  .padding(1.4);
+const xAxis = svg.append("g")
+  .attr("transform", `translate(0,${height})`)
+
+
+// Initialize the Y axis
+const y = d3.scaleLinear()
+  .range([ height, 0]);
+const yAxis = svg.append("g")
+  .attr("class", "myYaxis")
+
+
+
+// A function that create / update the plot for a given variable:
+function update(data) {
+
+  // Update the X axis
+  x.domain(data.map(d => d.group))
+    xAxis.transition().duration(15000).call(d3.axisBottom(x))
+
+  // Update the Y axis
+  y.domain([0, d3.max(data, d => d.value) ]);
+  yAxis.transition().duration(19000).call(d3.axisLeft(y));
+
+
+  
+
+const j = svg.selectAll(".myLine")
+ .data(data)
+//     // update lines
+     j
+       .join("line")
+       .attr("class", "myLine")
+       .transition()
+       .duration(10000)
+         .attr("x1", function(d) { return x(d.group); })
+         .attr("x2", function(d) { return x(d.group); })
+         .attr("y1", y(0))
+         .attr("y2", function(d) { return y(d.value); })
+         .attr("stroke", "black")
+
+
+        // .attr("x", d => x(d.group))
+        // .attr("y", d => y(d.value))
+        // .attr("width", x.bandwidth())
+        // .attr("height", d => height - y(d.value))
+
+    //  // variable u: map data to existing circle
+     const u = svg.selectAll("circle")
+       .data(data)
+    //  // update bars
+      u
+      .join("circle")
+        .transition()
+        .duration(19000)
+          .attr("cx", function(d) { return x(d.group); })
+          .attr("cy", function(d) { return y(d.value); })
+          .attr("r", 5)
+          .attr("fill", "red");
+
+
+     // https://d3-graph-gallery.com/graph/lollipop_button_data_csv.html   
+
+}
+
+// Initialize plot
+update(data1)
+</script>
